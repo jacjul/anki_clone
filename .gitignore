@@ -55,6 +55,21 @@ dist
 dist-ssr
 *.local
 
+# Python / Flask backend (api)
+api/venv/
+venv/
+__pycache__/
+*.py[cod]
+.python-version
+.pytest_cache/
+.mypy_cache/
+.coverage
+coverage.xml
+htmlcov/
+instance/
+*.db
+*.sqlite3
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
