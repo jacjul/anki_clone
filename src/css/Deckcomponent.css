@@ -1,0 +1,27 @@
+.box {
+    width: 100px;             /* Sets the width of the content area */
+    height: 130px;            /* Sets the height of the content area */
+    border: 2px solid #333;   /* Adds a solid black border */
+    padding: 20px;            /* Adds space between the content and border */
+    margin: 40px auto;        /* Adds space outside the border and centers the box horizontally */
+    background-color: #f0f0f0; /* Fills the background with a light gray color */
+    border-radius: 10px;      /* Rounds the corners of the box */
+    box-sizing: border-box;   /* Ensures padding and border are included in the width/height calculation */
+    text-align: center;       /* Centers the text inside the box */
+}
+
+.Deckcomponents_box{
+    display:flex;
+    flex-wrap: wrap;
+    align-items:center;
+    justify-content:center;
+    flex-direction: row;
+    
+}
+
+.Deckcomponents_grid{
+    display:grid;
+    grid-template-columns: repeat(10, 120px);
+    gap: 10px;
+}
+
