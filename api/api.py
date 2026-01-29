@@ -1,3 +1,5 @@
+# PowerShell -ExecutionPolicy Bypass -File "C:\Users\ASUS\projekte\react_1\anki_clone\run_api.ps1"
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from .database import db

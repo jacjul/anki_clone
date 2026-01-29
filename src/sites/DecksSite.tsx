@@ -1,8 +1,7 @@
 import { getAPI, postAPI } from "../api.ts";
 import { useState, useEffect } from "react";
 import DeckComponent from "../components/Deckcomponent"
-import AddCardSite from "./AddCardSite.tsx"
-import {Link} from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 type typ1= "DELETE" | "ADD" |"LEARN"
 type DeckProps = {
@@ -12,6 +11,7 @@ type DeckProps = {
 }
 
 export default function DecksSite() {
+    const navigate = useNavigate();
     const [updateDecks, setUpdateDecks] = useState<boolean>(false);
     const [deckName, setDeckName] = useState("");
     const [receivingDeck , setReceivingDeck]= useState<DeckProps[]>([])
@@ -57,12 +57,16 @@ export default function DecksSite() {
             setUpdateDecks(prev => !prev)
         }
         catch (error){console.log("Deck could not be successfully deleted")}}
-        else if(typ ==="ADD"){<Link to="/addCards" id={id}/>}
+        else if(typ ==="ADD"){
+            // Navigate to AddCardSite with deckId as a URL param for robust deep-linking
+            navigate(`/addCards/${id}`)
+        }
     }
 
 
     console.log(selectedDeck)
     const DeckComponentInstances = receivingDeck.map(deck => <DeckComponent key={deck.id} id={deck.id} name ={deck.name} selected={deck.selected} onAction={onAction} selectDeck={selectDeck}/>)
+    const selected = selectedDeck as DeckProps;
     return (
         <div className="mt-20">
         {selectedDeckExisiting? 
@@ -71,7 +75,7 @@ export default function DecksSite() {
                 <div className="grid grid-cols-7 gap-2">{DeckComponentInstances}</div>
             </div>
             <div className="w-3/5 ">
-            <DeckComponent key={selectedDeck.id} id={selectedDeck.id} name ={selectedDeck.name} selected={selectedDeck.selected} big={true} onAction={onAction} selectDeck={selectDeck}/>
+            <DeckComponent key={selected.id} id={selected.id} name ={selected.name} selected={selected.selected} big={true} onAction={onAction} selectDeck={selectDeck}/>
             </div>
         </div>
          :

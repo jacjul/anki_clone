@@ -14,14 +14,14 @@ export default function ButtonDeckActions({typButton,id, onAction}:ButtonDeckAct
     
 
     
-    return (<div>
-    {typButton === "DELETE" && <button  onClick={()=>onAction(typButton,id)} className="text-left ">
+    return (<div className="flex justify-start">
+    {typButton === "DELETE" && <button  onClick={()=>onAction(typButton,id)} className="text-left p-1 bg-grey-200 border shadow-md rounded-lg hover:bg-grey-400 m-1">
         {typButton}
     </button>}
-    {typButton === "LEARN" && <button  onClick={()=>onAction(typButton,id)} className="text-left ">
+    {typButton === "LEARN" && <button  onClick={()=>onAction(typButton,id)} className="text-left p-1 bg-grey-200 border shadow-md rounded-lg hover:bg-grey-400 m-1">
         {typButton}
     </button>}
-        {typButton === "ADD" && <button  onClick={()=>onAction(typButton,id)} className="text-left ">
+        {typButton === "ADD" && <button  onClick={()=>onAction(typButton,id)} className="text-left p-1 bg-grey-200 border shadow-md rounded-lg hover:bg-grey-400  m-1">
         {typButton}
     </button>}
     </div>
