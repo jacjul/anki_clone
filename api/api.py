@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from database import db
-from models import Card, Deck
+from .database import db
+from .models import Card, Deck
 from sqlalchemy import inspect
 import os 
 app = Flask(__name__)
@@ -9,6 +9,7 @@ app = Flask(__name__)
 CORS(app)
 #basedir = os.path.abspath(os.path.dirname(__file__))
 
+os.makedirs(app.instance_path, exist_ok=True)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///" + os.path.join(app.instance_path, "testdb.db")
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
