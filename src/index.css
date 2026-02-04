@@ -61,3 +61,12 @@ button:focus-visible {
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Global app background and text color */
+html, body, #root {
+  min-height: 100%;
+}
+
+body {
+  @apply bg-zinc-100 text-zinc-900;
+}

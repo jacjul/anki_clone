@@ -56,12 +56,19 @@ export default function AddCardSite(){
         }, [receivingDeck])
     //create the html element to add
     function createDropdown(decks:DeckProps[]){
-        return (<div>
-            <label></label>
-                        <select name="deck_id" value={selectedDeckValue || ""} onChange={getDeck}>
-                {decks.map(deck => <option key={deck.id} value={deck.id}>{deck.name}</option>)}
-            </select>
-        </div>)
+        return (
+            <div className="flex-1">
+                <label className="block text-sm font-medium text-zinc-700">Select deck</label>
+                <select
+                    name="deck_id"
+                    value={selectedDeckValue || ""}
+                    onChange={getDeck}
+                    className="mt-1 w-full px-3 py-2 rounded-md border border-zinc-300 bg-white text-zinc-900 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                >
+                    {decks.map(deck => <option key={deck.id} value={deck.id}>{deck.name}</option>)}
+                </select>
+            </div>
+        )
     }
 
      const getDeck = (event: React.ChangeEvent<HTMLSelectElement>) =>{
@@ -84,24 +91,44 @@ export default function AddCardSite(){
         const front = (formData.get("front") as string) || ""
         const back = (formData.get("back") as string) || ""
         const description = (formData.get("description") as string) || ""
+        
+        const withSentence = (formData.get("withSentence") as string) || ""
+        const withSentenceInt =  withSentence === "on" ? 1:0
+        console.log(withSentenceInt)
         const deck_id = Number(formData.get("deck_id") || selectedDeckValue)
-        postAPI("/api/set_card", {"front": front , "back": back ,"description": description ,"deck_id": deck_id })
+        postAPI(`/api/set_card/${withSentenceInt}`, {"front": front , "back": back ,"description": description ,"deck_id": deck_id })
     }
 
 
     return (
-        <div className="mt-30">
-        
-        <form onSubmit={handleSubmit} >
-            {htmlDecks}
-            <label>Frontside</label>
-            <input name="front" className="bg-gray200  px-2 py-4 border rounded shadow-sm w-full" type="text" id="front" placeholder="e.g. hello "/> 
-            <label>Backside</label>
-            <input name="back" className="bg-gray200 p-2 border rounded shadow-sm w-full" type="text" id="back" placeholder ="e.g. hola" />
-            <label>Description</label>
-            <input name="description" className="bg-gray200 p-2 border rounded shadow-sm w-full" type="text" id="description" placeholder ="e.g. hola is a colloquial way of saying hello" />
-            <button type="submit" ></button>
-        </form>
+        <div className="container mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-10">
+            <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm p-6">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        {htmlDecks}
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-zinc-700">Front</label>
+                        <input name="front" className="mt-1 w-full px-3 py-2 rounded-md border border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400" type="text" id="front" placeholder="e.g. hello"/>
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-zinc-700">Back</label>
+                        <input name="back" className="mt-1 w-full px-3 py-2 rounded-md border border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400" type="text" id="back" placeholder ="e.g. hola" />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-zinc-700">Description</label>
+                        <input name="description" className="mt-1 w-full px-3 py-2 rounded-md border border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400" type="text" id="description" placeholder ="e.g. hola is a colloquial way of saying hello" />
+                    </div>
+                    <div>
+                        <input type="checkbox" id="withSentence" name="withSentence" />
+                        <label > Add a corresponding sentence </label>
+                    </div>
+
+                    <div className="pt-2">
+                        <button type="submit" className="px-4 py-2 rounded-md bg-zinc-900 text-white hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-400">Add Card</button>
+                    </div>
+                </form>
+            </div>
         </div>
     )
 }

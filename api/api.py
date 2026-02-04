@@ -5,6 +5,7 @@ from flask_cors import CORS
 from .database import db
 from .models import Card, Deck
 from sqlalchemy import inspect
+from .gemini_api import get_sentence
 import os 
 app = Flask(__name__)
 
@@ -27,20 +28,33 @@ def hello_world():
 @app.route("/api/cards", methods=["GET"])
 def get_all_card():
     cards = Card.query.all()
-    cards_json = map(lambda x: x.to_dict(), cards)
-    return (jsonify({"cards": cards_json}))
+    cards_json = list(map(lambda x: x.to_dict(), cards))
+    return (jsonify({"message": cards_json}))
 
-@app.route("/api/set_card", methods=["POST"])
-def create_card():
+@app.route("/api/set_card/<int:with_sentence>", methods=["POST"])
+def create_card(with_sentence):
+    with_sentence = bool(with_sentence)
     front = request.json.get("front")
     back = request.json.get("back")
     description = request.json.get("description")
+    difficulty = 2.0
     deck_id= request.json.get("deck_id")
+
 
     if not front or not back:
         return (jsonify({"message": "The import was unseccesful"}))
     
-    new_card = Card(front=front, back=back, description=description, deck_id=deck_id)
+    if with_sentence:
+        text = get_sentence(front, "german")
+        print(text)
+        try:
+            new_card = Card(front=front,front_sentence=text[0], back=back,back_sentence=text[1], description=description,difficulty=difficulty, deck_id=deck_id)
+        except Exception as e:
+            print(f"Couldnt import sentences as expected bevause of {e} instead normal import without sentences")
+            new_card = Card(front=front, back=back, description=description,difficulty=difficulty, deck_id=deck_id)
+
+    else:
+        new_card = Card(front=front, back=back, description=description,difficulty=difficulty, deck_id=deck_id)
     
     try: 
         db.session.add(new_card)
@@ -48,6 +62,23 @@ def create_card():
         return (jsonify({"message": "Card created successfully"}), 201)
     except Exception as e:
         return (jsonify({"message": f"An error ocurred {e}"}), 400)
+
+@app.route("/api/set_card/<int:id>/<difficulty>", methods=["POST"])
+def update_difficulty(id, difficulty):
+    difficulty = float(difficulty)
+    card = Card.query.filter_by(id = id).first()
+    if card is None:
+        return(jsonify({"message":"Card does not exist"}),404)
+    
+    card.difficulty = difficulty
+
+    try:
+        db.session.commit()
+        return(jsonify({"message":"Card difficulty updated succesfully"}))
+    except Exception as e:
+        db.session.rollback()
+        return(jsonify({"message": f"Following error occured {e}"}))
+    
 
 @app.route("/api/decks", methods=["GET", "POST"])
 def create_select_deck():

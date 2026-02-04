@@ -14,26 +14,23 @@ type DeckComponentProps =  {
 export default function DeckComponent({name, id,selected, big, selectDeck,onAction}:DeckComponentProps){
     return (
         big? 
-        <div className="flex flex-row">
-            <button className="w-full flex-1 bg-green-300 rounded-md">{name} </button>
-            <div className="flex flex-col ">
-                < ButtonDeckActions id={id} typButton="DELETE" onAction={onAction}>Delete Deck</ ButtonDeckActions  >
-                < ButtonDeckActions id={id} typButton="LEARN" onAction={onAction}>Learn Cards</ ButtonDeckActions  >
-                < ButtonDeckActions id={id} typButton="ADD" onAction={onAction}>Add Cards</ ButtonDeckActions  >
+        <div className="rounded-xl border border-zinc-200 bg-white shadow-sm p-4 flex items-start gap-4">
+            <div className="flex-1">
+                <div className="text-lg font-semibold text-zinc-900">{name}</div>
+                <div className="text-sm text-zinc-500">Deck ID: {id}</div>
+            </div>
+            <div className="flex flex-col items-end">
+                <ButtonDeckActions id={id} typButton="DELETE" onAction={onAction} />
+                <ButtonDeckActions id={id} typButton="LEARN" onAction={onAction} />
+                <ButtonDeckActions id={id} typButton="ADD" onAction={onAction} />
             </div>
         </div> :
-    <div className="flex ">
-        {selected?        
-        <div className="flex flex-wrap w-4/5 ">
-
-        <button   className="rounded-md w-20 bg-green-200 h-24 text-xs p-1, gap-2" onClick ={() =>selectDeck(id)} >
+    <div className="flex">
+        <button
+            className={`rounded-lg w-24 h-24 text-xs px-2 py-1 border shadow-sm transition ${selected ? 'bg-emerald-50 border-emerald-300 ring-2 ring-emerald-200' : 'bg-white border-zinc-200 hover:bg-zinc-50'}`}
+            onClick={() => selectDeck(id)}
+        >
             {name}
         </button>
-        </div>:
-                <button   className="rounded-md w-20 h-24 text-xs bg-gray-100 p-1 gap-2" onClick ={() =>selectDeck(id)} >
-            {name}
-        </button>}
-        
-
     </div>)
 }

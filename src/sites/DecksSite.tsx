@@ -68,30 +68,40 @@ export default function DecksSite() {
     const DeckComponentInstances = receivingDeck.map(deck => <DeckComponent key={deck.id} id={deck.id} name ={deck.name} selected={deck.selected} onAction={onAction} selectDeck={selectDeck}/>)
     const selected = selectedDeck as DeckProps;
     return (
-        <div className="mt-20">
-        {selectedDeckExisiting? 
-        <div className="flex flex-row min-h-[calc(100vh-80px)] gap-10 ">       
-            <div className="flex flex-wrap align-center justify-center w-3/5">
-                <div className="grid grid-cols-7 gap-2">{DeckComponentInstances}</div>
-            </div>
-            <div className="w-3/5 ">
-            <DeckComponent key={selected.id} id={selected.id} name ={selected.name} selected={selected.selected} big={true} onAction={onAction} selectDeck={selectDeck}/>
-            </div>
-        </div>
-         :
-        <div className="flex flex-wrap align-center justify-center">
-            <div className="grid grid-cols-10 gap-2">{DeckComponentInstances}</div>
-        </div>}
+        <div className="container mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10">
+            {selectedDeckExisiting ? (
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-[calc(100vh-160px)]">
+                    <div className="lg:col-span-2">
+                        <div className="rounded-xl border border-zinc-200 bg-white shadow-sm p-4">
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                                {DeckComponentInstances}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="lg:col-span-1">
+                        <DeckComponent key={selected.id} id={selected.id} name={selected.name} selected={selected.selected} big={true} onAction={onAction} selectDeck={selectDeck} />
+                    </div>
+                </div>
+            ) : (
+                <div className="rounded-xl border border-zinc-200 bg-white shadow-sm p-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3">
+                        {DeckComponentInstances}
+                    </div>
+                </div>
+            )}
 
-        <form onSubmit={handleSubmit}>
-            <label>Put a Deck here</label>
-            <input
-                placeholder="eg spanish german"
-                value={deckName}
-                onChange={(e) => setDeckName(e.target.value)}
-            />
-            <button type="submit">Submit</button>
-        </form>
+            <form onSubmit={handleSubmit} className="mt-8 rounded-xl border border-zinc-200 bg-white shadow-sm p-4 flex items-end gap-3">
+                <div className="flex-1">
+                    <label className="block text-sm font-medium text-zinc-700">Create a new deck</label>
+                    <input
+                        placeholder="e.g. Spanish A1"
+                        value={deckName}
+                        onChange={(e) => setDeckName(e.target.value)}
+                        className="mt-1 w-full px-3 py-2 rounded-md border border-zinc-300 bg-white text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                    />
+                </div>
+                <button type="submit" className="px-4 py-2 rounded-md bg-zinc-900 text-white hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-zinc-400">Submit</button>
+            </form>
         </div>
     );
 }

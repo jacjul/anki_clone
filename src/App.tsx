@@ -6,6 +6,7 @@ import Header from "./components/Header"
 import Home from "./sites/Home"
 import DecksSite from "./sites/DecksSite"
 import AddCardSite from "./sites/AddCardSite"
+import LearnSite from './sites/LearnSite.tsx'
 
 function App() {
   const [message, setMessage] = useState("")
@@ -22,6 +23,7 @@ function App() {
         <Route path="/decks" element={<DecksSite />}/>
         <Route path="/addCards" element={<AddCardSite />} />
         <Route path="/addCards/:deckId" element={<AddCardSite />} />
+        <Route path="/learn" element={<LearnSite />} />
       </Routes>
     </>
   )
