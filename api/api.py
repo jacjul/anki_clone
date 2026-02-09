@@ -4,9 +4,11 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from .database import db
 from .models import Card, Deck
-from sqlalchemy import inspect
+from .spaced_rep import review_db_card
+from sqlalchemy import inspect, and_
 from .gemini_api import get_sentence
 import os 
+from datetime import datetime
 app = Flask(__name__)
 
 CORS(app)
@@ -26,8 +28,13 @@ def hello_world():
     return(jsonify({"message":"Test"}))
 
 @app.route("/api/cards", methods=["GET"])
-def get_all_card():
-    cards = Card.query.all()
+@app.route("/api/cards/<deck_id>", methods=["GET"])
+def get_all_card(deck_id=None):
+    if deck_id:
+        deck_id = int(deck_id)
+        cards = Card.query.filter(and_(Card.deck_id ==deck_id, Card.next_review < datetime.utcnow())).all()
+    else:
+        cards = Card.query.all()
     cards_json = list(map(lambda x: x.to_dict(), cards))
     return (jsonify({"message": cards_json}))
 
@@ -39,6 +46,10 @@ def create_card(with_sentence):
     description = request.json.get("description")
     difficulty = 2.0
     deck_id= request.json.get("deck_id")
+
+    last_reviewed = datetime.utcnow()
+    next_review = datetime.utcnow()
+
 
 
     if not front or not back:
@@ -62,7 +73,7 @@ def create_card(with_sentence):
         return (jsonify({"message": "Card created successfully"}), 201)
     except Exception as e:
         return (jsonify({"message": f"An error ocurred {e}"}), 400)
-
+"""
 @app.route("/api/set_card/<int:id>/<difficulty>", methods=["POST"])
 def update_difficulty(id, difficulty):
     difficulty = float(difficulty)
@@ -78,7 +89,49 @@ def update_difficulty(id, difficulty):
     except Exception as e:
         db.session.rollback()
         return(jsonify({"message": f"Following error occured {e}"}))
-    
+    """
+@app.route("/api/set_card/<int:id>/<difficulty>", methods =["POST"])
+def set_card_review(id, difficulty):
+ 
+    card = Card.query.get(id)
+    if card is None:
+        return jsonify({"message": "Card not found"}), 404
+
+    try:
+        due, _snapshot = review_db_card(card, str(difficulty))
+        db.session.commit()
+        return jsonify({
+            "message": "Card reviewed",
+            "nextReview": due.isoformat(),
+            "card": card.to_dict()
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"Error reviewing card: {e}"}), 400
+
+@app.route("/api/cards/<int:id>/review", methods=["POST"])
+def review_card(id: int):
+    card = Card.query.get(id)
+    if card is None:
+        return jsonify({"message": "Card not found"}), 404
+
+    payload = request.get_json(silent=True) or {}
+    rating = payload.get("rating", "Good")  # Again | Hard | Good | Easy
+
+    print(payload)
+    try:
+        due, snapshot = review_db_card(card, rating)
+        db.session.commit()
+        return jsonify({
+            "message": "Card reviewed",
+            "nextReview": due.isoformat(),
+            "card": card.to_dict(),
+            "snapshot": {**snapshot, "nextReview": due.isoformat(), "lastReviewed": card.last_reviewed.isoformat()}
+        }), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"message": f"Error reviewing card: {e}"}), 400
+
 
 @app.route("/api/decks", methods=["GET", "POST"])
 def create_select_deck():

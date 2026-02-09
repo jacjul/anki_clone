@@ -1,23 +1,20 @@
-import { useState, useEffect } from 'react'
-import { getAPI, postAPI }  from "./api.ts"
+import { lazy, Suspense } from 'react'
 import {Routes, Route} from "react-router-dom"
 import './App.css'
 import Header from "./components/Header"
-import Home from "./sites/Home"
-import DecksSite from "./sites/DecksSite"
-import AddCardSite from "./sites/AddCardSite"
-import LearnSite from './sites/LearnSite.tsx'
+
+const Home = lazy(()=>import("./sites/Home"));
+const DecksSite =lazy(()=>import("./sites/DecksSite"))
+const AddCardSite =lazy(()=> import("./sites/AddCardSite"))
+const LearnSite =lazy(()=> import('./sites/LearnSite.tsx'))
 
 function App() {
-  const [message, setMessage] = useState("")
-
-
   
   return (
     
     <>
       <Header />
-      
+      <Suspense fallback={<div>Loading</div>}>
       <Routes>
         <Route path="/" element={<Home />}/>
         <Route path="/decks" element={<DecksSite />}/>
@@ -25,6 +22,7 @@ function App() {
         <Route path="/addCards/:deckId" element={<AddCardSite />} />
         <Route path="/learn" element={<LearnSite />} />
       </Routes>
+      </Suspense >
     </>
   )
 }
